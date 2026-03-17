@@ -16,12 +16,16 @@ jobs:
           php-version: '8.1'
       - name: Install dependencies
         run: composer install --no-dev
+      - name: Write private key
+        run: |
+          echo "${{ secrets.OCI_KEY_FILE }}" > /tmp/oci_key.pem
+          chmod 600 /tmp/oci_key.pem
       - name: Run script
         env:
           OCI_REGION: ${{ secrets.OCI_REGION }}
           OCI_USER_ID: ${{ secrets.OCI_USER }}
           OCI_TENANCY_ID: ${{ secrets.OCI_TENANCY }}
           OCI_KEY_FINGERPRINT: ${{ secrets.OCI_FINGERPRINT }}
-          OCI_PRIVATE_KEY_FILENAME: ${{ secrets.OCI_KEY_FILE }}
+          OCI_PRIVATE_KEY_FILENAME: /tmp/oci_key.pem
           OCI_SUBNET_ID: ${{ secrets.OCI_SUBNET_ID }}
         run: php index.php
